@@ -1,9 +1,8 @@
-import cv2
+import tensorflow as tf 
 
-img = cv2.imread("TIRTHO.jpg", -1)
+if tf.test.gpu_device_name(): 
 
-print(img)
+    print('Default GPU Device:{}'.format(tf.test.gpu_device_name()))
+else:
 
-cv2.imshow('image',img)
-cv2.waitKey(0)
-cv2.destroyAllWindows()
+   print("Please install GPU version of TF")

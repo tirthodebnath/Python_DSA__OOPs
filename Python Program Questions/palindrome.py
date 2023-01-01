@@ -11,10 +11,10 @@ def reverse(string):
 string=input("Enter the string:")
 reverse(string)       
 
-#Palindrome a sring........2nd
-string=input("Enter the string:")
-rev_string=string[::-1]
-if string==rev_string:
-    print(string,"is palindrome.")
-else:
-    print(string,"is not palindrome.")    
+# #Palindrome a sring........2nd
+# string=input("Enter the string:")
+# rev_string=string[::-1]
+# if string==rev_string:
+#     print(string,"is palindrome.")
+# else:
+#     print(string,"is not palindrome.")    

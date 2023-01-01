@@ -8,7 +8,7 @@ list.sort(reverse=True)
 print(list)
 
 
-#sort a list withou using sort()
+#sort a list without using sort()
 list1 = [1,2,3,4,5,6,7,8,9,10,5,3,2,2,4,3]
 new_list = []
 while list1:

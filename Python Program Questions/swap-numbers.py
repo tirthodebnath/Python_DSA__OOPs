@@ -11,8 +11,8 @@ print('The value of x after swapping: {}'.format(x))
 print('The value of y after swapping: {}'.format(y))
 
 #Without Using Temporary Variable
-def swap(a,b):
-    a,b = b,a
-    return a,b
-print(swap(5,10))
+# def swap(a,b):
+#     a,b = b,a
+#     return a,b
+# print(swap(5,10))
 

@@ -1,0 +1,20 @@
+# Iterative python program to reverse an array
+
+# Function to reverse A[] from start to end
+def reverseList(A, start, end):
+	while start < end:
+		A[start], A[end] = A[end], A[start]
+		start += 1
+		end -= 1
+
+# Driver function to test above function
+A = [1, 2, 3, 4, 5]
+print(A)
+b=int(len(A)-1)
+print(b)
+reverseList(A, 0, b)
+print("Reversed list is")
+print(A)
+# This program is contributed by Pratik Chhajer
+
+    

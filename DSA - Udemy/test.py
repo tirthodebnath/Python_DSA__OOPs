@@ -389,16 +389,21 @@
 
 ###################################################### 
 
-mul = [lambda x: i for i in [0,1,2,3,5]]
+# mul = [lambda x: i for i in [0,1,2,3,5]]
 
-print(mul)
+# print(mul)
 
-p = [m(3) for m in mul]
+# p = [m(3) for m in mul]
 
-print(p)
+# print(p)
 
-l=[]
-for i in mul:
-    # print(i)
-    l.append(i)
-print(l)
+# l=[]
+# for i in mul:
+#     # print(i)
+#     l.append(i)
+# print(l)
+
+
+######################################################
+
+

@@ -6,3 +6,5 @@ class parent(ABC):
     @abstractmethod
     def display(self):
         pass
+
+

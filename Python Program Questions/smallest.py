@@ -3,6 +3,7 @@
 a =[10,5,3]
 b=0
 
+
 def smallest_3():
     for i in a:
         if a[0]>a[1] and a[0]>a[2] :

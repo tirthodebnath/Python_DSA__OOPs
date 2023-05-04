@@ -1,14 +1,14 @@
-A = ['t','u','t','o','r','i','a','l']
-for i in range(len(A)):
-   min_= i
-   for j in range(i+1, len(A)):
-      if A[min_] > A[j]:
-         min_ = j
-   #swap
-A[i], A[min_] = A[min_], A[i]
-# main
-for i in range(len(A)):
-   print(A[i])
+# A = ['t','u','t','o','r','i','a','l']
+# for i in range(len(A)):
+#    min_= i
+#    for j in range(i+1, len(A)):
+#       if A[min_] > A[j]:
+#          min_ = j
+#    #swap
+# A[i], A[min_] = A[min_], A[i]
+# # main
+# for i in range(len(A)):
+#    print(A[i])
 
 
 ###################################################################
@@ -41,5 +41,12 @@ for i in range(len(A)):
 # print
 
 ################################################################
+class Adder:
+    def __init__(self, num1, num2):
+        self.num1 = num1
+        self.num2 = num2
+        
+my_adder = Adder(3, 5)
 
- 
+print(my_adder.num1 + my_adder.num2)
+

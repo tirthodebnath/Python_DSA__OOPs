@@ -165,13 +165,13 @@
 
 
 
-x=0
-while(x<5):
-    if(x>3):
-        continue
-        x+=1
-    else:
-        print(x,end="")
+# x=0
+# while(x<5):
+#     if(x>3):
+#         continue
+#         x+=1
+#     else:
+#         print(x,end="")
 
 
 
@@ -186,3 +186,7 @@ while(x<5):
 # print(avg)    
 
 ################################
+
+
+
+    

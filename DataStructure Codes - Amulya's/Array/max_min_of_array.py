@@ -21,6 +21,3 @@
 # print("the minimum element is:",min)       
 
 
-a=[1,2,3,4,4]
-
-for i in range(i,n):

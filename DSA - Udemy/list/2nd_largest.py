@@ -1,16 +1,27 @@
 ##2nd largest   element
 
-a=[30,10,3,5,6,100,2,40]
-target=a[0]
+def find_second_largest(numbers):
+    # Initialize variables to store the largest and second largest numbers
+    largest = float('-inf')
+    second_largest = float('-inf')
 
-for i in range(0,len(a)-1):
-    if target < a[i]:
-        target=a[i]
-    temp=a[0]
-    a[0]=a[i]
-    # print(a[0])
-    a[i]=temp
-print(a)
-target1=a[1]
-print("Largest Element:",target)
-print("2nd Largest Element:",target1)
+    # Iterate through the numbers
+    for num in numbers:
+        # If the current number is larger than the largest number,
+        # update both the largest and second largest numbers
+        if num > largest:
+            second_largest = largest
+            largest = num
+        # If the current number is smaller than the largest number but larger
+        # than the second largest number, update only the second largest number
+        elif num > second_largest and num < largest:
+            second_largest = num
+
+    # Return the second largest number
+    return second_largest
+
+
+# Test the function
+num_list = [100, 5, 7, 2, 8, 15]
+second_largest_num = find_second_largest(num_list)
+print("The second largest number in the list is:", second_largest_num)

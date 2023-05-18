@@ -40,15 +40,61 @@
 
 
 
-a=input("Enter:",)
-b=input("Enter:",)
-c=input("Enter:",)
-d=a+b+c
-f=d-10
-if d == 21:
-    print("True")
-elif d > 21 and a or b or c or d ==11 and f > 21:
-    print("Bust")
+# a=input("Enter:",)
+# b=input("Enter:",)
+# c=input("Enter:",)
+# d=a+b+c
+# f=d-10
+# if d == 21:
+#     print("True")
+# elif d > 21 and a or b or c or d ==11 and f > 21:
+#     print("Bust")
+
+
+
+
+def merge_sort(arr):
+    if len(arr) <= 1:
+        return arr
+
+    # Divide the array into two halves
+    mid = len(arr) // 2
+    left_half = arr[:mid]
+    right_half = arr[mid:]
+
+    # Recursively sort the two halves
+    left_half = merge_sort(left_half)
+    right_half = merge_sort(right_half)
+
+    # Merge the sorted halves
+    merged = merge(left_half, right_half)
+
+    return merged
+
+
+def merge(left, right):
+    merged = []
+    i = j = 0
+
+    while i < len(left) and j < len(right):
+        if left[i] < right[j]:
+            merged.append(left[i])
+            i += 1
+        else:
+            merged.append(right[j])
+            j += 1
+
+    # Append remaining elements, if any
+    merged.extend(left[i:])
+    merged.extend(right[j:])
+
+    return merged
+
+
+a = [3, 1, 5, 6, 23, 11, 44, 2]
+sorted_a = merge_sort(a)
+print(sorted_a)
+
 
 
     

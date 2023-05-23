@@ -1,5 +1,4 @@
 ##2nd largest   element
-
 def find_second_largest(numbers):
     # Initialize variables to store the largest and second largest numbers
     largest = float('-inf')

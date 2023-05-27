@@ -112,3 +112,33 @@ on customers.customer_id = orders.customer_id
 order by amount asc
 
 
+/*Find Duplicate element in sql*/
+
+select country, count(*) as Dup_No
+from customers 
+group by country
+having count(*) > 1
+
+
+/*3rd Highest salary*/
+
+select age 
+from customers
+order by age desc 
+limit 1 offset 2
+
+
+/*3rd Highest salary using window function*/
+
+SELECT salary
+FROM (
+  SELECT salary, DENSE_RANK() OVER (ORDER BY salary DESC) AS rank
+  FROM employees
+) AS ranked_employees
+WHERE rank = 3;
+
+/*Sum pf no of rows in a table*/
+
+select sum(amount) from(select * from orders order by amount asc limit 1, 6) as amount_new 
+
+

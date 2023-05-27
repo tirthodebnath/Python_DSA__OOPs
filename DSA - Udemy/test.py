@@ -447,3 +447,19 @@
 
 # def inSalLst(self):
 #         return [self.name,self.initialSalary()]
+
+
+### Count the vowels
+
+# a="Umbrella"
+
+# v=["a","e","i","o","u","A","E","I","O","U"]
+
+# for i in a:
+#     if i in v:
+#         print(i)
+
+
+list1 = [1, 3, 2]
+list2 = [1, 3, 2]
+print(list1*list2)

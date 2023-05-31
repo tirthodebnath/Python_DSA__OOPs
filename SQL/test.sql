@@ -137,8 +137,14 @@ FROM (
 ) AS ranked_employees
 WHERE rank = 3;
 
-/*Sum pf no of rows in a table*/
-
+/*Sum of no of rows in a table*/
 select sum(amount) from(select * from orders order by amount asc limit 1, 6) as amount_new 
+
+
+/*Partition By country*/
+
+SELECT first_Name, Age, country, COUNT(*) OVER (PARTITION BY country) AS count_by_country
+FROM customers;
+
 
 

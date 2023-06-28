@@ -112,13 +112,18 @@ on customers.customer_id = orders.customer_id
 order by amount asc
 
 
-/*Find Duplicate element in sql*/
+/*Find Duplicate element in sql 1st medthos*/
 
-select country, count(*) as Dup_No
+select country, count(country) as Dup_No
 from customers 
 group by country
 having count(*) > 1
 
+/*Find Duplicate emails in sql 2nd medthos*/
+
+select distinct p1.Email
+from Person p1, Person p2
+where p1.Id <> p2.Id and p1.Email = p2.Email
 
 /*3rd Highest salary*/
 
@@ -147,4 +152,155 @@ SELECT first_Name, Age, country, COUNT(*) OVER (PARTITION BY country) AS count_b
 FROM customers;
 
 
+/*Usign case Statement*/
+
+SELECT First_Name, Last_Name, Age,
+CASE
+WHEN Age > 30 THEN 'Old'
+WHEN Age BETWEEN 27 AND 30 THEN 'Young'
+ELSE 'Baby'
+END
+from customers
+
+
+/*Q2 - Find All employees who earn more than their managers*/
+
+select CONCAT(e.FName,'',e.LName)as Name, e.Salary from Employees as e
+join Employees as m 
+on m.ManagerId= e.Id
+where e.Salary > m.Salary
+
+
+/*How to Delete Duplicate Rows student_name in SQL from student table */
+
+DELETE FROM students
+WHERE student_id NOT IN (s
+    SELECT MIN(student_id)
+    FROM students
+    GROUP BY student_name
+);
+
+
+/*Select first 3 letters from the firstname column*/
+
+select substring(first_name,1,3) from customers 
+
+
+/* Write an SQL query to print the FIRST_NAME from the Worker table after removing white spaces from the right/left side.*/
+
+Select RTRIM(FIRST_NAME) from Worker;  --For Right
+
+Select LTRIM(FIRST_NAME) from Worker;  --For Left
+
+
+/*Write an SQL query that fetches the unique values of DEPARTMENT from the Worker table and prints its length.*/
+
+select distinct length(department) from worker 
+
+
+/* Write an SQL query to print details of the Workers whose FIRST_NAME contains ‘a’*/
+
+Select * from Worker where FIRST_NAME like '%a%'
+
+
+/*Write an SQL query to print details of the Workers whose FIRST_NAME ends with ‘h’ and contains six alphabets.*/
+
+Select * from Worker where FIRST_NAME like '_____h';
+
+
+/*Write an SQL query to print details of the Workers who joined in Feb’2014.*/
+
+Select * from Worker where year(JOINING_DATE) = 2014 and month(JOINING_DATE) = 2;
+
+
+/*Write an SQL query to print details of the Workers who are also Managers.*/
+
+select w.first_name,t.worker_title from worker as w 
+inner join title as t on w.worker_id = t.worker_ref_id
+where t.worker_title = "manager"
+
+
+/*Write an SQL query to show only odd rows from a table.*/
+
+SELECT * FROM Worker WHERE MOD (WORKER_ID, 2) <> 0;
+
+
+/*Write an SQL query to fetch the names of workers who earn the highest salary.*/
+
+select department, sum(salary) from worker
+group by department
+
+
+/*Write an SQL query to print the name of employees having the highest salary in each department.*/
+
+SELECT Department, first_Name, Salary
+FROM worker
+WHERE (Department, Salary) IN (
+  SELECT Department, MAX(Salary)
+  FROM worker
+  GROUP BY Department
+);
+
+
+/*Write a query to retrieve two minimum and maximum salaries from the EmployeePosition table.*/
+
+SELECT *
+FROM (
+    SELECT bonus_amount
+    FROM bonus
+    ORDER BY bonus_amount ASC
+    LIMIT 2
+) AS min_salaries
+UNION
+SELECT *
+FROM (
+    SELECT bonus_amount
+    FROM bonus
+    ORDER BY bonus_amount DESC
+    LIMIT 2
+) AS max_salaries;
+
+
+/*Customers Who Never Order*/
+
+select name Customers from Customers
+where id not in (select distinct(customerID) from Orders)
+
+
+
+/*Employees Earning More Than Their Managers*/
+
+select e1.name as employee
+from Employee e1, Employee e2
+where e1.managerID = e2.id 
+and e1.salary> e2.salary
+
+OR
+
+select e1.name as Employee from employee as e1
+join Employee e2
+on e1.managerId = e2.id 
+where e1.salary > e2.salary
+
+
+/*Write an SQL query to report the name and bonus amount of each employee with a bonus less than 1000*/
+
+select e1.name, e2.bonus from
+Employee as e1
+join Bonus e2
+on e1.empId = e2.empId
+where e2.bonus < 1000
+
+
+OR
+
+select
+    a.name,
+    b.bonus 
+from
+    employee a 
+left outer join
+    bonus b 
+on (a.empid = b.empid)
+where ifnull(bonus,-1) < 1000
 

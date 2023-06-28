@@ -1,50 +1,43 @@
-# # # Python code to convert string to list
-# # str1 = "The following function would TAKE as input a text string and create a list of all \
-# # the words in the text each of Which contains only lower-case letters and is of length no \
-# # longer than 5"
-# # def Convert(str1):
-# #     li = list(str1.split(" "))
-# #     li1=[]
-# #     for i in li:
-# #         if len(i)<6 and i.islower():
-# #             li1.append(i)
-# #             return li1
-
-# # # Driver code	
-
-# # print(Convert(str1))
+# Python code to convert string to list
+# str1 = "The following function would TAKE as input a text string and create a list of all \
+# the words in the text each of Which contains only lower-case letters and is of length no \
+# longer than 5"
+# def Convert(str1):
+#     li = list(str1.split(" "))
+#     li1=[]
+#     for i in li:
+#         if len(i)<6 and i.islower():
+#             li1.append(i)
+#             return li1
+        
+# print(Convert(str1))
 
 # ##############################################################################################################################
 
-# # # str=["jbcjb","hgcs","dvgvcsdjs","sjvdwvhjc"]
-# # # def longest(str):
-# # #     str2=[]
-# # #     for i in str:
-# # #         if len(i)>6:
-# # #             str2.append(i)
-# # #             return str2
-# # # print(longest(str))            
+##Longest string from the list
 
+# str_list = ["jbcjb", "hgcs", "dvgvcsdjs", "sjvdwvhjc"]
+# longest_str = ""
 
+# for i in str_list:
+#     if len(i) > len(longest_str):
+#         longest_str = i
 
+# print("Longest string:", longest_str)
+       
 
+#We want to design a function to decrypt a piece of text, which has been encrypted with the following scheme:
 
-# # # We want to design a function to decrypt a piece of text, which has been encrypted with the following scheme:
-
-# # from re import I
-
-
-# # a=["The","ram"]
-
-# # for i in a:
-# #     c=i
-# #     for j in c:
-# #         print(j)
+# a=["The","ram"]
+# for i in a:
+#     c=i
+#     for j in c:
+#         print(j)
 
 
 # # # #############################################################################################################################
 
-
+##Show uniq values only
 
 # t="ababab"
 # t1=""
@@ -54,42 +47,31 @@
 # print(t1)
 
 
-
-# # text="ababab"
-# # li=list(text.split(" "))
-# # li1=[]
-# # li2=[]
-# # for i in li:
-# #     for j in i:
-# #         if j not in li2:
-# #             li2+=j
-# #             print(li2)            
-
+# text="ababab"
+# li=list(text.split(" "))
+# li1=[]
+# li2=[]
+# for i in li:
+#     for j in i:
+#         if j not in li2:
+#             li2+=j
+#             print(li2)            
 
 
-# ##########################################################################################
-# # li="This is by no means something specially designed to wear sometimes"
-# # li1=[]
-# # li1 = list(li.split(" "))
-# # li2=[]
-# # for i in li1:
-# #     if len(i)<=5 and i[-1]=="s":
-# #         li2.append(i)    
-# # print(li2) 
+##########################################################################################
 
-# # text = "The following function would TAKE as input a text string and create a list of all \
-# # the words in the text each of Which contains only lower-case letters and is of length no \
-# # longer than 5"
-# # def Convert(s):
-# #     li = list(text.split(" "))
-# #     li1=[]
-# #     for i in li:
-# #         if len(i)<=5 and i.islower():
-# #             li1.append(i)
-# #             return li1
-# # print(Convert(text))
+# li="This is by no means something specially designed to wear sometimes"
+# li1 = list(li.split(" "))
+# li2=[]
+# for i in li1:
+#     if len(i)<=5 and i[-1]=="s":
+#         li2.append(i)    
+# print(li2) 
 
 
+#########################################################################################
+
+##Private Protected Public
 
 # class MyClass:
 #     __var2 = 'var2'
@@ -117,6 +99,7 @@
  
 # clzz = MyClass()
 # clzz.my_method()
+
 ################################################################
 
 # def list_integer(l):
@@ -228,23 +211,63 @@
 
 
 ########################################################################
-sampleSet = {"Jodi", "Eric", "Garry"}
-sampleSet.add("Vicki")
-print(sampleSet) 
+# sampleSet = {"Jodi", "Eric", "Garry"}
+# sampleSet.add("Vicki")
+# print(sampleSet) 
+# ###############################################################
+
+# ##Input
+# a=[1,2,3,4,5,6,7]
+# ##Output
+# # b=[{4,2},{5,3}..]
+
+
+# a = [1, 2, 3, 4, 5, 6, 7]
+# b = [{x, y} for x, y in zip(a[1::2], a[::2])]
+# print(b)  # output: [{2, 4}, {3, 5}, {6, 7}]
+
 ###############################################################
 
-##Input
-a=[1,2,3,4,5,6,7]
-##Output
-# b=[{4,2},{5,3}..]
+# Find the max consecutive ones in the given list
+# L=[1,2,1,1,1,1,4,5,1,1,3,4,1,1,1] in python  
+
+# def max_consecutive_ones(lst):
+#     max_ones = 0
+#     current_ones = 0
+
+#     for num in lst:
+#         if num == 1:
+#             current_ones += 1
+#             max_ones = max(max_ones, current_ones)
+#         else:
+#             current_ones = 0
+
+#     return max_ones
+
+# L = [1, 2, 1, 1, 1, 1, 4, 5, 1, 1, 3, 4, 1, 1, 1]
+# max_ones = max_consecutive_ones(L)
+# print("Maximum consecutive ones:", max_ones)
+
+#############################################################
+
+# test = {"a": 7, "b": 4, "c": 1}
+
+# sorted_dict = dict(sorted(test.items(), key=lambda x: x[1]))
+
+# print(sorted_dict)
+
+##########################################################
+
+numbers = [1, 2, 4, 1, 5, 6, 7, 10, 19]
+
+even_numbers = lambda x: x % 2 == 0, numbers
+odd_numbers = list(filter(lambda x: x % 2 != 0, numbers))
+
+print("Even numbers:", even_numbers)
+print("Odd numbers:", odd_numbers)
 
 
-a = [1, 2, 3, 4, 5, 6, 7]
-b = [{x, y} for x, y in zip(a[1::2], a[::2])]
-print(b)  # output: [{2, 4}, {3, 5}, {6, 7}]
-
-###############################################################
 
 
 
-
+ 

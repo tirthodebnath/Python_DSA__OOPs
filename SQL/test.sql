@@ -304,3 +304,60 @@ left outer join
 on (a.empid = b.empid)
 where ifnull(bonus,-1) < 1000
 
+
+
+/*Left Join (Write an SQL query that reports the product_name, year, and price for each sale_id in the Sales table.)*/
+
+select product_name, year, price from Sales 
+left join Product
+on Sales.product_id = Product.product_id
+
+
+/*Write an SQL query that reports the average experience years of all the employees for each project, rounded to 2 digits.*/
+
+select project_id , round(avg(experience_years), 2) as average_years
+from project as p
+left join employee as e
+on p.employee_id = e.employee_id
+group by project_id
+
+
+/*Write an SQL query to find all the authors that viewed at least one of their own articles.*/
+
+select author_id as id
+from Views
+where author_id = viewer_id
+group by author_id
+order by author_id asc
+
+
+/*Creating CTE(Common TABLE Expression)*/
+
+WITH CTE1 as (select concat(FName,' ',LName)as Full_Name from employees order by DepartmentId)
+select * from CTE1  
+
+
+
+/*SP(Store PROCEDURE) Example*/
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `1st_procedure_employees`()
+BEGIN
+select * from employees;
+END
+
+
+/*Find for each date the number of different products sold and their names.
+
+The sold products names for each date should be sorted lexicographically.
+
+Return the result table ordered by sell_date.
+
+The result format is in the following example.*/
+
+select sell_date,
+       count(distinct(product)) as num_sold,
+       group_concat(distinct product order by product asc separator ',') as products
+
+from activities
+group by sell_date
+order by sell_date

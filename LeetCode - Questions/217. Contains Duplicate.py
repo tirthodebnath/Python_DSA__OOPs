@@ -2,15 +2,18 @@
 #https://leetcode.com/problems/contains-duplicate/
 
 class Solution:
-    def containsDuplicate(self, nums):
-        self.nums=[]
+    def containsDuplicate(nums,counter):
+        nums=[]
         counter = []
         
         for num in nums:
             if num not in counter:
-                counter.add(num)
+                counter.append(num)
             else:
                 return True
         return False
 
-S=Solution()
+S = Solution()
+nums = [1, 2, 3, 4, 5, 1]  # Example list of numbers
+print(S.containsDuplicate(nums))
+

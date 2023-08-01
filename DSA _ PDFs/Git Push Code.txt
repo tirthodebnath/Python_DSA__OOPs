@@ -1,0 +1,5 @@
+1: git init
+2: git add .
+3: git commit -m "What ever you want to write"
+4: git remote add github https://github.com/tirthodebnath/Python_codes.git
+5: git push -u origin main

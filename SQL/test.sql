@@ -361,3 +361,44 @@ select sell_date,
 from activities
 group by sell_date
 order by sell_date
+
+
+/*write a sql query to count of flights where destination and souse flight are not from same country*/
+
+select count(*) from
+(select f.source, c1.state src_state, f.destination, c2.state dst_state, f.flight from flights f
+left join cities c1 on f.source = c1.city left join cities c2 on f.destination = c2.city) temp1 where src_state <> dst_state;
+
+
+/*there are two tables orders and customers, now write a sql query to show which gender ordered the most between two dates*/
+
+SELECT c.gender, COUNT(*) AS order_count
+FROM orders o
+JOIN customers c ON o.customer_id = c.customer_id
+WHERE o.order_date >= '2023-07-10' AND o.order_date <= '2023-07-15'
+GROUP BY c.gender
+ORDER BY order_count DESC;
+
+
+/*Compareing the score of the students using windows lag*/
+
+select *, lag(score) over(partition by dep_name order by student_id) as previous_record
+from student_score
+
+
+/*Compareing the score of the students using windows lead*/
+
+select *, lead(score) over(partition by dep_name order by student_id) as next_record
+from student_score
+
+
+/*Department wise MAX salary using partition by*/
+
+select d.Name as Department, e.FName as Employee, MAX(Salary) OVER (PARTITION BY d.Name ORDER BY Salary) AS Salary
+FROM Employees as e JOIN Departments as d ON e.Id = d.Id
+
+/*Department wise MAX salary using partition by and department wise ranking*/
+
+select d.Name as Department, e.FName as Employee, Salary, Rank() OVER (PARTITION BY d.Name ORDER BY Salary ASC) AS Rankl
+FROM Employees as e 
+JOIN Departments as d ON e.DepartmentId = d.Id

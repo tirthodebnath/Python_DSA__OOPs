@@ -1,4 +1,4 @@
-##Python Linked List: Create a singly linked list, append some items and iterate through the list
+ ##Python Linked List: Create a singly linked list, append some items and iterate through the list
 
 class Node:
     # Singly linked node

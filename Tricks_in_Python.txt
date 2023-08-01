@@ -1,3 +1,0 @@
-1: To ceate a virtual enviroment use: py -3 -m venv {Folder Name}
-2: To Install Requrement.txt file:  pip install -r requirements.txt
-3: To create Requrement.txt file: pip freeze > requirements.txt

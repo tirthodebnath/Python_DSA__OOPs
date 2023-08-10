@@ -402,3 +402,9 @@ FROM Employees as e JOIN Departments as d ON e.Id = d.Id
 select d.Name as Department, e.FName as Employee, Salary, Rank() OVER (PARTITION BY d.Name ORDER BY Salary ASC) AS Rankl
 FROM Employees as e 
 JOIN Departments as d ON e.DepartmentId = d.Id
+
+
+/*How to CREATE index in sql*/
+
+CREATE INDEX idx_employees_department ON employees (department);
+ 

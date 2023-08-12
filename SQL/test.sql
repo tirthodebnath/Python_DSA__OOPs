@@ -408,3 +408,41 @@ JOIN Departments as d ON e.DepartmentId = d.Id
 
 CREATE INDEX idx_employees_department ON employees (department);
  
+ 
+ /*Question: Retrieve the top 5 highest paid employees for each department, sorted by salary in descending order.
+ Using Join, Partition by and row_number*/
+
+ SELECT name, salary
+FROM (
+    SELECT
+        d.name,
+        e.salary,
+        ROW_NUMBER() OVER(PARTITION BY d.Name ORDER BY e.salary DESC) AS rank
+    FROM
+        employees AS e
+    LEFT JOIN
+        departments AS d ON e.DepartmentId = d.Id
+) AS RankedEmployees
+WHERE rank <= 5;
+
+
+/*Question: Li st the departments where the average salary is
+higher than the company's overall average salary.*/
+
+WITH DepartmentAvg AS (
+    SELECT
+        d.name AS department_name,
+        AVG(e.salary) AS avg_salary
+    FROM
+        employees AS e
+    LEFT JOIN
+        departments AS d ON e.DepartmentId = d.Id
+    GROUP BY
+        d.name
+)
+SELECT
+    department_name
+FROM
+    DepartmentAvg
+WHERE
+    avg_salary > (SELECT AVG(avg_salary) FROM DepartmentAvg);

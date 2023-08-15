@@ -369,6 +369,15 @@ select count(*) from
 (select f.source, c1.state src_state, f.destination, c2.state dst_state, f.flight from flights f
 left join cities c1 on f.source = c1.city left join cities c2 on f.destination = c2.city) temp1 where src_state <> dst_state;
 
+/*##############OR#####################################*/
+
+SELECT Flight AS FlightCount
+FROM flights f
+JOIN cities as d_source ON f.source = d_source.city
+JOIN cities as d_dest ON f.destination = d_dest.city
+WHERE d_source.state <> d_dest.state;
+
+
 
 /*there are two tables orders and customers, now write a sql query to show which gender ordered the most between two dates*/
 
@@ -417,7 +426,7 @@ FROM (
     SELECT
         d.name,
         e.salary,
-        ROW_NUMBER() OVER(PARTITION BY d.Name ORDER BY e.salary DESC) AS rank
+        DENCE() OVER(PARTITION BY d.Name ORDER BY e.salary DESC) AS rank
     FROM
         employees AS e
     LEFT JOIN

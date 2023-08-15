@@ -35,15 +35,15 @@
 ######################################################################
 ##Common elements between 2 lists
 
-list1 = [1, 2, 3, 4, 5,7]
-list2 = [4, 5, 6, 7, 8]
+# list1 = [1, 2, 3, 4, 5,7]
+# list2 = [4, 5, 6, 7, 8]
 
-common_elements = []
+# common_elements = []
 
-for i in list1:
-    if i in list2:
-        common_elements.append(i)
-print(common_elements)
+# for i in list1:
+#     if i in list2:
+#         common_elements.append(i)
+# print(common_elements)
 
 ######################################################################
 

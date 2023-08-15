@@ -28,16 +28,6 @@ nodes = [
 }
 ]
 
-# l2={}
-# j= 1
-# for i in nodes:
-#     print(i)
-#     for key,value in i.items():
-#         if key == "id":
-#             l2[j]= value
-#             j = j+1
-# l2 .sort()          
-# print(l2) 
   
 sorted_nodes = sorted(nodes, key=lambda x: x["id"])
 

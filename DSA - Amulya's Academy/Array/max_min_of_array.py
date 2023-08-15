@@ -18,6 +18,23 @@
 #     if arr[i]<min:
 #         min=arr[i]
 
-# print("the minimum element is:",min)       
+# print("the minimum element is:",min) 
+
+
+##Currect One
+
+def bubble_sort(arr):
+    n = len(arr)
+    for i in range(n):
+        for j in range(0, n-i-1):
+            if arr[j] > arr[j+1]:
+                arr[j], arr[j+1] = arr[j+1], arr[j]
+
+arr = [3, 2, 1, 56, 10000, 167]
+bubble_sort(arr)
+print("Max = ", arr[-1])
+print("Min = ", arr[0])
+print(arr)
+      
 
 

@@ -408,7 +408,7 @@ JOIN Departments as d ON e.DepartmentId = d.Id
 
 CREATE INDEX idx_employees_department ON employees (department);
  
- 
+
  /*Question: Retrieve the top 5 highest paid employees for each department, sorted by salary in descending order.
  Using Join, Partition by and row_number*/
 
@@ -446,3 +446,16 @@ FROM
     DepartmentAvg
 WHERE
     avg_salary > (SELECT AVG(avg_salary) FROM DepartmentAvg);
+
+
+/*Find all numbers that appear at least three times consecutively. Return the result table in any order. Using Lead & Lag*/
+
+SELECT DISTINCT num as ConsecutiveNums
+FROM (
+    SELECT 
+        num,
+        LEAD(num, 1) OVER (ORDER BY id) AS next_num,
+        LAG(num, 1) OVER (ORDER BY id) AS prev_num
+    FROM Logs
+) AS subquery
+WHERE num = next_num AND num = prev_num;

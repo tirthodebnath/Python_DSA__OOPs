@@ -142,6 +142,17 @@ FROM (
 ) AS ranked_employees
 WHERE rank = 3;
 
+/*########OR##########   Using JOIN*/
+SELECT *
+FROM (
+    SELECT e.*,
+           DENSE_RANK() OVER (PARTITION BY d.Department_Id ORDER BY e.Salary DESC) AS Rank
+    FROM Employee AS e
+    LEFT JOIN Department AS d ON e.Department_Id = d.Department_Id
+) AS new_tbl
+WHERE Rank = 3;
+
+
 /*Sum of no of rows in a table*/
 select sum(amount) from(select * from orders order by amount asc limit 1, 6) as amount_new 
 
@@ -468,3 +479,12 @@ FROM (
     FROM Logs
 ) AS subquery
 WHERE num = next_num AND num = prev_num;
+
+
+/*Output=
+Tirtho(M)
+Archi(M)
+Sahin(F)
+*/
+
+select concat(Firstname, '(', SUBSTRING(sex, 1,1),')') from employee

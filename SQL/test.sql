@@ -142,6 +142,15 @@ FROM (
 ) AS ranked_employees
 WHERE rank = 3;
 
+-- OR
+
+/*3rd Highest salary using window function*/
+select s.Salary
+  from employee s                                                
+  where 3=(select count(distinct(salary))
+            from employee r
+            where r.Salary>=s.Salary)
+
 /*########OR##########   Using JOIN*/
 SELECT *
 FROM (
@@ -488,3 +497,93 @@ Sahin(F)
 */
 
 select concat(Firstname, '(', SUBSTRING(sex, 1,1),')') from employee
+
+
+/*Multiple left joins */
+
+select distribution_centers.*, tbl_5,* from bigquery-public-data.thelook_ecommerce.distribution_centers as distribution_centers left join (SELECT inventory_items.*, tbl_4.*
+FROM bigquery-public-data.thelook_ecommerce.inventory_items AS inventory_items
+LEFT JOIN (
+    SELECT products.*, tbl_3.*
+    FROM bigquery-public-data.thelook_ecommerce.products AS products
+    LEFT JOIN (
+        SELECT order_items.*, tbl_2.*
+        FROM bigquery-public-data.thelook_ecommerce.order_items AS order_items
+        LEFT JOIN (
+            SELECT orders.*, tbl_1.*
+            FROM bigquery-public-data.thelook_ecommerce.orders AS orders
+            LEFT JOIN (
+                SELECT users.*, events.*
+                FROM bigquery-public-data.thelook_ecommerce.users AS users
+                LEFT JOIN bigquery-public-data.thelook_ecommerce.events AS events
+                ON users.id = events.user_id
+            ) AS tbl_1
+            ON orders.user_id = tbl_1.user_id
+        ) AS tbl_2
+        ON order_items.order_id = tbl_2.order_id
+    ) AS tbl_3
+    ON products.id = tbl_3.product_id
+) AS tbl_4
+ON inventory_items.product_id = tbl_4.product_id) as tbl_5
+on distribution_centers.id = tbl_5.distribution_center_id
+
+/*Multiple nested query is slow, so we are using CTE which is faster*/
+
+WITH enriched_order_data AS (
+    SELECT
+        orders.*,
+        users.*,
+        events.*
+    FROM
+        bigquery-public-data.thelook_ecommerce.orders AS orders
+    LEFT JOIN
+        bigquery-public-data.thelook_ecommerce.users AS users
+    ON
+        orders.user_id = users.id
+    LEFT JOIN
+        bigquery-public-data.thelook_ecommerce.events AS events
+    ON
+        users.id = events.user_id
+),
+enriched_order_items AS (
+    SELECT
+        order_items.*,
+        enriched_order_data.*
+    FROM
+        bigquery-public-data.thelook_ecommerce.order_items AS order_items
+    LEFT JOIN
+        enriched_order_data
+    ON
+        order_items.order_id = enriched_order_data.order_id
+),
+enriched_products AS (
+    SELECT
+        products.*,
+        enriched_order_items.*
+    FROM
+        bigquery-public-data.thelook_ecommerce.products AS products
+    LEFT JOIN
+        enriched_order_items
+    ON
+        products.id = enriched_order_items.product_id
+),
+enriched_inventory_items AS (
+    SELECT
+        inventory_items.*,
+        enriched_products.*
+    FROM
+        bigquery-public-data.thelook_ecommerce.inventory_items AS inventory_items
+    LEFT JOIN
+        enriched_products
+    ON
+        inventory_items.product_id = enriched_products.product_id
+)
+SELECT
+    distribution_centers.*,
+    enriched_inventory_items.*
+FROM
+    bigquery-public-data.thelook_ecommerce.distribution_centers AS distribution_centers
+LEFT JOIN
+    enriched_inventory_items
+ON
+    distribution_centers.id = enriched_inventory_items.distribution_center_id;

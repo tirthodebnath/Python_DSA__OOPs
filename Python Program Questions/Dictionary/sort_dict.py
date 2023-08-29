@@ -22,14 +22,20 @@ print("Dict Keys =",color_dict.keys())
 ##Dict Values
 print("Dict Values =",color_dict.values())
 
-##Sorted by items
-print("Sorted by items =",sorted(color_dict.items()))
-
 ##Sorted by Keys
 print("Sorted by Keys =",sorted(color_dict))
 
 ##Sorted by Values
 print("Sorted by Values =",sorted(color_dict.values()))
+
+
+##Sorted the dictionary by keys
+print("Sorted the dictionary by keys =",sorted(color_dict.items()))
+
+##Sorted the dictionary by values
+sorted_dict = dict(sorted(color_dict.items(), key=lambda item: item[1]))
+print("Sorted the dictionary by values =",sorted_dict)
+
 
 
 

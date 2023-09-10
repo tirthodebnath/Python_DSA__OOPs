@@ -455,7 +455,7 @@ FROM (
 WHERE rank <= 5;
 
 
-/*Question: Li st the departments where the average salary is
+/*Question: List the departments where the average salary is
 higher than the company's overall average salary.*/
 
 WITH DepartmentAvg AS (
@@ -587,3 +587,19 @@ LEFT JOIN
     enriched_inventory_items
 ON
     distribution_centers.id = enriched_inventory_items.distribution_center_id;
+
+
+/*Sql case with grades*/
+
+SELECT
+    FirstName,
+    Salary,
+    CASE
+        WHEN salary >= 4000 THEN 'A'
+        WHEN salary >= 3000 THEN 'B'
+        WHEN salary >= 2000 THEN 'C'
+        WHEN salary >= 1000 THEN 'D'
+        ELSE 'F'
+    END AS grade
+FROM
+    employee;

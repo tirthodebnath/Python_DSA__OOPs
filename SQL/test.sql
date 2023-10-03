@@ -64,7 +64,23 @@ select * from worker where department like "Admin%"
 
 SELECT pro_name, pro_price FROM item_mast WHERE pro_price = (SELECT MIN(pro_price) FROM item_mast);
 
+
+/* Write an SQL query to print details of the Workers whose FIRST_NAME contains ‘a’*/
+
+Select * from Worker where FIRST_NAME like '%a%'
+
+
+/*Write an SQL query to print details of the Workers whose FIRST_NAME ends with ‘h’ and contains six alphabets.*/
+
+Select * from Worker where FIRST_NAME like '_____h';
+
+
 /*Q-17. From the following table, write a SQL query to calculate average price of the items for each company. Return average price and company code.*/
+
+
+/*Select first 3 letters from the firstname column*/
+
+select substring(first_name,1,3) from customers 
 
 SELECT AVG(pro_price), pro_com FROM item_mast GROUP BY pro_com;
 
@@ -76,7 +92,18 @@ from Person p1, Person p2
 
 where p1.Id <> p2.Id and p1.Email = p2.Email
 
-/*Suppose that a website contains two tables, the Customers table and the Orders table. Write a SQL query to find all customers who never order anything.*/
+
+/*Inner join using asc*/
+
+select first_name , item , amount 
+from customers 
+outer join orders 
+on customers.customer_id = orders.customer_id 
+order by amount asc
+
+
+/*Suppose that a website contains two tables, the Customers table and the Orders table. 
+Write a SQL query to find all customers who never order anything.*/
 
 select name Customers from Customers
 where id not in (select distinct(customerID) from Orders)
@@ -94,22 +121,12 @@ not in(
 );
 
 
-/*Write an SQL query to delete all the duplicate emails,
+/*delete all the duplicate emails,
 keeping only one unique email with the smallest id. Note that you are supposed to write a DELETE statement and not a SELECT one.*/
 
 Delete p1
 from Person p1, Person p2
 where p1.Email = p2.Email and p1.Id > p2.Id
-
-
-
-/*Inner join using asc*/
-
-select first_name , item , amount 
-from customers 
-outer join orders 
-on customers.customer_id = orders.customer_id 
-order by amount asc
 
 
 /*Find Duplicate element in sql 1st medthos*/
@@ -119,7 +136,7 @@ from customers
 group by country
 having count(*) > 1
 
-/*Find Duplicate emails in sql 2nd medthos*/
+/*---OR----*/
 
 select distinct p1.Email
 from Person p1, Person p2
@@ -151,7 +168,8 @@ select s.Salary
             from employee r
             where r.Salary>=s.Salary)
 
-/*########OR##########   Using JOIN*/
+/*
+-----OR---  Using JOIN*/
 SELECT *
 FROM (
     SELECT e.*,
@@ -172,7 +190,7 @@ SELECT first_Name, Age, country, COUNT(*) OVER (PARTITION BY country) AS count_b
 FROM customers;
 
 
-/*Usign case Statement*/
+/*Case Statement*/
 
 SELECT First_Name, Last_Name, Age,
 CASE
@@ -185,25 +203,21 @@ from customers
 
 /*Q2 - Find All employees who earn more than their managers*/
 
-select CONCAT(e.FName,'',e.LName)as Name, e.Salary from Employees as e
-join Employees as m 
-on m.ManagerId= e.Id
+select CONCAT(e.FName,'',e.LName)as Name, e.Salary
+from Employees as e
+join Employees as m on m.ManagerId = e.Id
 where e.Salary > m.Salary
 
 
 /*How to Delete Duplicate Rows student_name in SQL from student table */
 
 DELETE FROM students
-WHERE student_id NOT IN (s
+WHERE student_id NOT IN 
+(
     SELECT MIN(student_id)
     FROM students
     GROUP BY student_name
 );
-
-
-/*Select first 3 letters from the firstname column*/
-
-select substring(first_name,1,3) from customers 
 
 
 /* Write an SQL query to print the FIRST_NAME from the Worker table after removing white spaces from the right/left side.*/
@@ -216,16 +230,6 @@ Select LTRIM(FIRST_NAME) from Worker;  --For Left
 /*Write an SQL query that fetches the unique values of DEPARTMENT from the Worker table and prints its length.*/
 
 select distinct length(department) from worker 
-
-
-/* Write an SQL query to print details of the Workers whose FIRST_NAME contains ‘a’*/
-
-Select * from Worker where FIRST_NAME like '%a%'
-
-
-/*Write an SQL query to print details of the Workers whose FIRST_NAME ends with ‘h’ and contains six alphabets.*/
-
-Select * from Worker where FIRST_NAME like '_____h';
 
 
 /*Write an SQL query to print details of the Workers who joined in Feb’2014.*/
@@ -423,7 +427,8 @@ from student_score
 
 /*Department wise MAX salary using partition by*/
 
-select d.Name as Department, e.FName as Employee, MAX(Salary) OVER (PARTITION BY d.Name ORDER BY Salary) AS Salary
+select d.Name as Department, e.FName as Employee, MAX(Salary) 
+OVER (PARTITION BY d.Name ORDER BY Salary) AS Salary
 FROM Employees as e JOIN Departments as d ON e.Id = d.Id
 
 /*Department wise MAX salary using partition by and department wise ranking*/
@@ -446,7 +451,7 @@ FROM (
     SELECT
         d.name,
         e.salary,
-        DENCE() OVER(PARTITION BY d.Name ORDER BY e.salary DESC) AS rank
+        DENCE_RANK() OVER(PARTITION BY d.Name ORDER BY e.salary DESC) AS rank
     FROM
         employees AS e
     LEFT JOIN
@@ -458,7 +463,7 @@ WHERE rank <= 5;
 /*Question: List the departments where the average salary is
 higher than the company's overall average salary.*/
 
-WITH DepartmentAvg AS (
+WITH DepartmentAvg AS ( 
     SELECT
         d.name AS department_name,
         AVG(e.salary) AS avg_salary

@@ -228,27 +228,6 @@
 
 ###############################################################
 
-# Find the max consecutive ones in the given list
-# L=[1,2,1,1,1,1,4,5,1,1,3,4,1,1,1] in python  
-
-# def max_consecutive_ones(lst):
-#     max_ones = 0
-#     current_ones = 0
-
-#     for num in lst:
-#         if num == 1:
-#             current_ones += 1
-#             max_ones = max(max_ones, current_ones)
-#         else:
-#             current_ones = 0
-
-#     return max_ones
-
-# L = [1, 2, 1, 1, 1, 1, 4, 5, 1, 1, 3, 4, 1, 1, 1]
-# max_ones = max_consecutive_ones(L)
-# print("Maximum consecutive ones:", max_ones)
-
-#############################################################
 
 # test = {"a": 7, "b": 4, "c": 1}
 
@@ -993,5 +972,49 @@
 
 
 ###################################
+
+# logs4 = [
+#     ["1", "user_96", "resource_5"],
+#     ["1", "user_10", "resource_5"],
+#     ["301", "user_11", "resource_5"],
+#     ["603", "user_12", "resource_5"],
+#     ["301", "user_12", "resource_5"],
+  
+#     ["1603", "user_12", "resource_7"],
+# ]
+
+# # Should return:
+# # {
+# #  'user_96': [1, 1],
+# #  'user_10': [1, 1],
+# #  'user_11': [301, 301],
+# #  'user_12': [301, 1603],
+# # }
+
+# # output = {}
+
+# # for row in logs4:
+# #     temp = [] 
+# #     if row[1] not in output:
+# #         output[row[1]] = list()
+    
+# #     output[row[1]].append(row[0])
+        
+# # for key,value in output.items():
+
+# #     if len(value) == 1:
+# #         value.append(value[0])
+    
+# #     else:
+# #         sorted(value) 
+# #         value = value[0],value[-1]
+# #         value = list(value)
+# #         print(key, value)
+        
+# # print(output)
+        
+
+
+#######################################################
 
 

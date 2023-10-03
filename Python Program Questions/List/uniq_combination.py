@@ -66,3 +66,23 @@ end1 = time.perf_counter()
 print("elapsed = ", end1-start1)
 
 
+
+
+################2nd methos###############
+
+list_1 = ["b", "c", "d"]
+list_2 = [1, 4, 9, 1]
+
+a=[]
+b=[]
+for i in list_1:
+    for j in list_2:
+        a.append((i,j))
+
+print(a)
+
+for t in a:
+    if t not in b:
+        b.append(t)
+print(b)  
+

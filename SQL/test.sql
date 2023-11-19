@@ -451,7 +451,7 @@ FROM (
     SELECT
         d.name,
         e.salary,
-        DENCE_RANK() OVER(PARTITION BY d.Name ORDER BY e.salary DESC) AS rank
+            DENSE_RANK() OVER(PARTITION BY d.Name ORDER BY e.salary DESC) AS rank
     FROM
         employees AS e
     LEFT JOIN

@@ -460,6 +460,7 @@ FROM (
 WHERE rank <= 5;
 
 
+
 /*Question: List the departments where the average salary is
 higher than the company's overall average salary.*/
 

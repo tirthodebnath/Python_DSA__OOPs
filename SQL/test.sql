@@ -609,3 +609,42 @@ SELECT
     END AS grade
 FROM
     employee;
+
+
+
+/*Emp_ID - Emp_Name - WrkStn_ID - Manager_ID - Dept_ID - Salary
+101    -  ABC     -  1001     -  NULL      -  IT     -  50,000
+102    -  DEF     -  1002     -  NULL      -  HR     -  70,000
+103    -  GHI     -  1005     -  101       -  IT     -  20,000
+104    -  JKL     -  NULL     -  102       -  HR     -  10,000
+105    -  MNO     -  NULL     -  101       -  IT     -  15,000
+
+
+Write an SQL query to find the top-paying employee in each department who is not a manager.*/
+
+
+WITH RankedSalaries AS (
+  SELECT
+    Emp_ID,
+    Emp_Name,
+    WrkStn_ID,
+    Manager_ID,
+    Dept_ID,
+    Salary,
+    ROW_NUMBER() OVER (PARTITION BY Dept_ID ORDER BY Salary DESC) AS SalaryRank
+  FROM
+    YourTableName -- Replace with your actual table name
+  WHERE
+    Manager_ID IS NULL -- To filter out managers
+)
+SELECT
+  Emp_ID,
+  Emp_Name,
+  WrkStn_ID,
+  Manager_ID,
+  Dept_ID,
+  Salary
+FROM
+  RankedSalaries
+WHERE
+  SalaryRank = 1;

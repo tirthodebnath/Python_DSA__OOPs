@@ -14,5 +14,6 @@
             "username": "root",
             "askForPassword": true
         }
-    ]
+    ],
+    "python.defaultInterpreterPath": "C:\\Users\\user\\.msvscode.hdinsight\\hdinsightJupyter\\Scripts\\python.exe"
 }

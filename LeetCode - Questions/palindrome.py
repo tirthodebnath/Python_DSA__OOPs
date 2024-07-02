@@ -1,7 +1,7 @@
 #9. Palindrome Number
 #https://leetcode.com/problems/palindrome-number/
 
-def isPalindrome(x: int) -> bool:
+def isPalindrome(x):
     # Base condition
     if x < 0:
         return False

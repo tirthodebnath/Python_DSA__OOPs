@@ -1,7 +1,7 @@
 #Longest String in list
 #https://www.geeksforgeeks.org/python-longest-string-in-list/
 
-test_list = ['gfg', 'is', 'best', 'for', 'geeks']
+test_list = ['gfg', 'is', 'best', 'for', 'geeks', 'Tirthankar']
 
 max = 0
 

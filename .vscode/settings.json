@@ -15,5 +15,8 @@
             "askForPassword": true
         }
     ],
-    "python.defaultInterpreterPath": "C:\\Users\\user\\.msvscode.hdinsight\\hdinsightJupyter\\Scripts\\python.exe"
+    "python.defaultInterpreterPath": "C:\\Users\\user\\.msvscode.hdinsight\\hdinsightJupyter\\Scripts\\python.exe",
+    "python-envs.defaultEnvManager": "ms-python.python:conda",
+    "python-envs.defaultPackageManager": "ms-python.python:conda",
+    "python-envs.pythonProjects": []
 }

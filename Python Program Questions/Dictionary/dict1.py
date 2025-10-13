@@ -3,7 +3,7 @@ marks = [29, 71, 95, 32]
 passing = 35
 
 ##From the above data give the below putput
-{'kalyan': 'Fail', 'Krish': 'Pass', 'Ashu': 'Pass', 'Abdul': 'Fail'}
+# {'kalyan': 'Fail', 'Krish': 'Pass', 'Ashu': 'Pass', 'Abdul': 'Fail'}
 
 
 result_dict = {}

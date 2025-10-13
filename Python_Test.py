@@ -1,4 +1,4 @@
-# Python code to convert string to list
+# #Python code to convert string to list
 # str1 = "The following function would TAKE as input a text string and create a list of all \
 # the words in the text each of Which contains only lower-case letters and is of length no \
 # longer than 5"
@@ -14,7 +14,7 @@
 
 # ##############################################################################################################################
 
-##Longest string from the list
+#Longest string from the list
 
 # str_list = ["jbcjb", "hgcs", "dvgvcsdjs", "sjvdwvhjc"]
 # longest_str = ""
@@ -25,6 +25,19 @@
 
 # print("Longest string:", longest_str)
        
+# #######################################################
+# str_list = ["jbcjb", "hgcs", "dvgvcsdjs", "sjvdwvhjc"]
+
+# # Bubble sort based on length (descending)
+# for i in range(len(str_list)):
+#     for j in range(len(str_list) - 1):
+#         if len(str_list[j]) < len(str_list[j + 1]):
+#             # swap
+#             str_list[j], str_list[j + 1] = str_list[j + 1], str_list[j]
+
+# print(str_list)
+
+
 
 #We want to design a function to decrypt a piece of text, which has been encrypted with the following scheme:
 
@@ -1025,5 +1038,94 @@
 #     return result
 # print(factorial(5))
 
+
+
+#####################
+
+# lst = [8, 3, 1, 2, 3, 4, 5, 5, 6, 6, 7, 9, 10]
+
+# # Step 1: remove duplicates manually
+# unique = []
+# for x in lst:
+#     if x not in unique:
+#         unique.append(x)
+
+# # Step 2: sort manually (using bubble sort)
+# n = len(unique)
+# for i in range(0, n):
+#     for j in range(0, n-i-1):
+#         if unique[j] > unique[j+1]:
+#             # swap
+#             unique[j], unique[j+1] = unique[j+1], unique[j]
+#     # print(i)
+
+# print(unique)
+
+###########################################################
+
+# # define dictionary
+# my_dict = {"a": 10, "b": 20, "c": 30, "d": 80}
+
+# def manage_dict(key, value=None):
+#     if key not in my_dict:
+#         return f"Key '{key}' not found!"
+    
+#     if value is not None:   # update if value is given
+#         my_dict[key] = value
+#         return f"Updated: {key} = {my_dict[key]}"
+#     else:                   # return current value
+#         return f"Current: {key} = {my_dict[key]}"
+
+# # Examples:
+# print(manage_dict("a"))        # get value of 'a'
+# print(manage_dict("b", 99))    # update 'b' to 99
+# print(manage_dict("c"))        # get updated value of 'c'
+# print(my_dict)                 # check dictionary
+
+
+# define dictionary
+# my_dict = {"a": 10, "b": 20, "c": 30, "d": 80}
+
+# def manage_dict():
+#     key = input("Enter the key (a/b/c/d): ").strip()
+    
+#     if key not in my_dict:
+#         print(f"Key '{key}' not found!")
+#         return
+    
+#     choice = input("Do you want to update the value? (yes/no): ").strip().lower()
+    
+#     if choice == "yes":
+#         value = input(f"Enter new value for '{key}': ").strip()
+        
+#         # Convert value to int if it's a number
+#         if value.isdigit():
+#             value = int(value)
+        
+#         my_dict[key] = value
+#         print(f"Updated: {key} = {my_dict[key]}")
+#     else:
+#         print(f"Current: {key} = {my_dict[key]}")
+
+# # Run continuously until user exits
+# while True:
+#     manage_dict()
+#     cont = input("Do you want to continue? (yes/no): ").strip().lower()
+#     if cont != "yes":
+#         break
+
+# print("\nFinal Dictionary:", my_dict)
+
+# Find all prime numbers from 1 to 100
+
+for num in range(2, 101):  # start from 2 (1 is not prime)
+    is_prime = True
+    for i in range(2, int(num**0.5) + 1):  # check divisibility up to sqrt(num)
+        print(num)
+        if num % i == 0:
+            is_prime = False
+            break
+    if is_prime:
+        print(num, "is a prime number")
 
 

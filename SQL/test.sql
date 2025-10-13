@@ -648,3 +648,42 @@ FROM
   RankedSalaries
 WHERE
   SalaryRank = 1;
+
+
+
+--Customers Who Never Order
+SELECT c.name AS Customers
+FROM Customers c
+LEFT JOIN Orders o
+ON c.id = o.customerId
+WHERE o.customerId is NULL;
+
+
+--Department wise 2nd highestsalary using partition by and department wise ranking
+
+select dept, salary from (select *, dense_rank() over(partition by dept order by salary desc) as rank
+from employees) as t where rank = 2;
+
+
+--Delete Duplicate Rows in SQL(Using CTE and row_number)
+WITH duplicate_rows AS (
+    SELECT customer_id,
+           ROW_NUMBER() OVER (PARTITION BY customer_id ORDER BY customer_id) AS row_num
+    FROM invoice_data
+)
+delete from duplicate_rows WHERE row_num > 1;
+
+
+--Count of subjects taught by each teacher
+select teacher_id, count(distinct subject_id) as cnt from Teacher group by teacher_id
+
+
+--Find employees who earn less than 30000 and do not have a manager
+SELECT Employee.employee_id
+FROM Employees AS Employee
+LEFT JOIN Employees AS Manager
+  ON (Employee.manager_id = Manager.employee_id)
+WHERE
+  Employee.salary < 30000
+  AND Employee.manager_id IS NOT NULL
+  AND Manager.employee_id IS NULL

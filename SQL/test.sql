@@ -687,3 +687,17 @@ WHERE
   Employee.salary < 30000
   AND Employee.manager_id IS NOT NULL
   AND Manager.employee_id IS NULL
+
+
+
+---Find the department with the highest number of employee.
+WITH new_table AS (
+  SELECT 
+    department, 
+    COUNT(*) AS dep_emp_count 
+  FROM employee 
+  GROUP BY department
+)
+SELECT TOP 1 department, dep_emp_count
+FROM new_table
+ORDER BY dep_emp_count DESC;

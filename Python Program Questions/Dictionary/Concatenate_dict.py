@@ -10,6 +10,5 @@
 
 d = {'x': 10, 'y': 20, 'z': 30} 
 for dict_key, dict_value in d.items():
-    print(dict_key,'->',dict_value)
-	
-
+    if dict_value % 3 == 0:
+        print(dict_key,'->',dict_value)

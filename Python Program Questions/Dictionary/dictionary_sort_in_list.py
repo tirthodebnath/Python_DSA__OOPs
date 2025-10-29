@@ -1,34 +1,14 @@
 # sort the list with key 'id'
 
 nodes = [
-{
-    "name" : "A",
-    "id" : 27,
-    "pid": 3
-},
-{
-    "name" : "B",
-    "id" : 3,
-    "pid" : 1
-},
-{
-    "name" : "C",
-    "id" : 42,
-    "pid" : 1
-},
-{
-    "name" : "D",
-    "id" : 11,
-    "pid" : 2
-},
-{
-    "name" : "E",
-    "id" : 23,
-    "pid" : 4   
-}
+    {"name": "A", "id": 27, "pid": 3},
+    {"name": "B", "id": 3, "pid": 1},
+    {"name": "C", "id": 42, "pid": 1},
+    {"name": "D", "id": 11, "pid": 2},
+    {"name": "E", "id": 23, "pid": 4}
 ]
 
-  
 sorted_nodes = sorted(nodes, key=lambda x: x["id"])
 
 print(sorted_nodes)
+    

@@ -701,3 +701,10 @@ WITH new_table AS (
 SELECT TOP 1 department, dep_emp_count
 FROM new_table
 ORDER BY dep_emp_count DESC;
+
+
+----Duplicate data using window function
+select * from 
+(select *, ROW_NUMBER() over(partition by department order by id)as row_num 
+from employee) as new_table
+where row_num > 1

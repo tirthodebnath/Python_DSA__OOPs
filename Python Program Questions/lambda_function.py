@@ -31,3 +31,4 @@ odd_numbers = list(filter(lambda x: x % 2 != 0, numbers))
 
 print("Even numbers:", even_numbers)
 print("Odd numbers:", odd_numbers)
+print("Test")

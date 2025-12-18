@@ -1118,14 +1118,24 @@
 
 # Find all prime numbers from 1 to 100
 
-for num in range(2, 101):  # start from 2 (1 is not prime)
-    is_prime = True
-    for i in range(2, int(num**0.5) + 1):  # check divisibility up to sqrt(num)
-        print(num)
-        if num % i == 0:
-            is_prime = False
-            break
-    if is_prime:
-        print(num, "is a prime number")
+# for num in range(2, 101):  # start from 2 (1 is not prime)
+#     is_prime = True
+#     for i in range(2, int(num**0.5) + 1):  # check divisibility up to sqrt(num)
+#         print(num)
+#         if num % i == 0:
+#             is_prime = False
+#             break
+#     if is_prime:
+#         print(num, "is a prime number")
+
+
+
+def prime(n):
+	a = 0
+	n = list(str(n))
+	for i in n:
+		a +=int(i)
+	return a
+print(prime(1234)) 
 
 

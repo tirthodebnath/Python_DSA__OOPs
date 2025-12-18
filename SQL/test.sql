@@ -661,7 +661,8 @@ WHERE o.customerId is NULL;
 
 --Department wise 2nd highestsalary using partition by and department wise ranking
 
-select dept, salary from (select *, dense_rank() over(partition by dept order by salary desc) as rank
+select dept, salary 
+from (select *, dense_rank() over(partition by dept order by salary desc) as rank
 from employees) as t where rank = 2;
 
 
@@ -708,3 +709,218 @@ select * from
 (select *, ROW_NUMBER() over(partition by department order by id)as row_num 
 from employee) as new_table
 where row_num > 1
+
+
+--Find departments where average salary is greater than 70000
+WITH avg_sal_dep AS (
+    SELECT 
+        d.department_name,
+        AVG(e.salary) AS avg_salary
+    FROM employees e
+    JOIN departments d 
+        ON e.department_id = d.department_id
+    GROUP BY d.department_name
+)
+SELECT 
+    department_name, 
+    avg_salary
+FROM avg_sal_dep
+WHERE avg_salary > 70000;
+
+
+
+--Department wise 2nd highest salary using DENSE_RANK()
+ select * from 
+ (select *, DENSE_RANK() over(Partition By department order by salary desc) as dep_rank 
+ from [employee_salary]) as table_1 where dep_rank =2 
+
+
+
+--Sales Analysis by Region
+SELECT 
+    c.region,
+    SUM(s.amount) AS total_revenue,
+    COUNT(s.order_id) AS total_orders,
+    AVG(s.amount) AS avg_order_value,
+    CASE 
+        WHEN AVG(s.amount) >= 1000 THEN 'High'
+        WHEN AVG(s.amount) BETWEEN 500 AND 999.99 THEN 'Medium'
+        ELSE 'Low'
+    END AS revenue_category
+FROM sales s
+JOIN customers c 
+    ON s.customer_id = c.customer_id
+GROUP BY c.region
+ORDER BY total_revenue DESC;
+
+-- Write an SQL query to calculate the time difference 
+-- in seconds between each user's consecutive actions.
+-- user_id | timestamp
+-- -------- | -------------------
+-- U1      | 2025-10-20 09:00:00
+-- U1      | 2025-10-20 09:00:30
+-- U2      | 2025-10-20 09:00:10
+-- U1      | 2025-10-20 09:01:45
+-- U2      | 2025-10-20 09:02:00
+
+SELECT 
+    user_id,
+    timestamp,
+    LAG(timestamp) OVER (PARTITION BY user_id ORDER BY timestamp) AS prev_timestamp,
+    TIMESTAMPDIFF(SECOND, 
+                  LAG(timestamp) OVER (PARTITION BY user_id ORDER BY timestamp), 
+                  timestamp) AS time_diff_seconds
+FROM your_table;
+
+--Write a SQL query that returns each department's name and the average salary of employees 
+--in that department, rounded to 2 decimal places, only for departments whose average salary 
+--is greater than 50,000, ordered by average salary descending.
+
+SELECT 
+    d.dept_name,
+    ROUND(AVG(e.salary), 2) AS avg_salary
+FROM employees e
+JOIN departments d 
+    ON e.dept_id = d.dept_id
+GROUP BY d.dept_id, d.dept_name
+HAVING AVG(e.salary) > 50000
+ORDER BY avg_salary DESC;
+
+
+--Write a SQL query to find the employees with the highest salary in each department.
+SELECT 
+    d.dept_name,
+    e.emp_name,
+    e.salary
+FROM employees e
+JOIN departments d 
+    ON e.dept_id = d.dept_id
+WHERE e.salary = (
+    SELECT MAX(salary)
+    FROM employees
+    WHERE dept_id = e.dept_id
+)
+ORDER BY e.salary DESC;
+
+
+--OR
+
+SELECT 
+    dept_name,
+    emp_name,
+    salary
+FROM (
+    SELECT 
+        d.dept_name,
+        e.emp_name,
+        e.salary,
+        DENSE_RANK() OVER(
+            PARTITION BY e.dept_id 
+            ORDER BY e.salary DESC
+        ) AS rnk
+    FROM employees e
+    JOIN departments d 
+        ON e.dept_id = d.dept_id
+) t
+WHERE rnk = 1
+ORDER BY salary DESC;
+
+
+
+--Write a SQL query to find the previous day's sales amount for each salesman.
+SELECT
+    salesman_id,
+    sales_date,
+    amount,
+    LAG(amount) OVER (PARTITION BY salesman_id ORDER BY sales_date) AS prev_day_amount
+FROM sales;
+
+
+--Write a SQL query to find the next higher salary for each employee within the same department.
+SELECT 
+    emp_id,
+    emp_name,
+    department,
+    salary,
+    LEAD(salary) OVER (PARTITION BY department ORDER BY salary) AS next_salary
+FROM employee_salary;
+
+--Write a SQL query to calculate the month-over-month revenue change for each product.
+SELECT
+    product_id,
+    revenue_month,
+    revenue_amount,
+    revenue_amount - LAG(revenue_amount) OVER (PARTITION BY product_id ORDER BY revenue_month) AS change_from_prev_month
+FROM monthly_revenue;
+
+--Write a SQL query to find the difference in bonus amounts between consecutive years for each employee.
+SELECT
+    emp_id,
+    emp_name,
+    bonus_year,
+    bonus_amount,
+    LEAD(bonus_amount) OVER (PARTITION BY emp_id ORDER BY bonus_year) AS next_year_bonus,
+    bonus_amount - LEAD(bonus_amount) OVER (PARTITION BY emp_id ORDER BY bonus_year) AS diff_with_next_year
+FROM employee_bonus;
+
+
+--Write a SQL query to fetch details of employees who were hired in the last 6 months.
+SELECT emp_id, emp_name, dept_id, hire_date
+FROM employees
+WHERE hire_date >= DATEADD(MONTH, -6, CURRENT_DATE);
+
+
+
+-- Find the users who logged in on two consecutive days.
+
+-- option 1:
+SELECT DISTINCT user_id
+FROM (
+    SELECT user_id,
+           login_date,
+           LAG(login_date) OVER (
+               PARTITION BY user_id
+               ORDER BY login_date
+           ) AS prev_login_date
+    FROM Logins
+) t
+WHERE login_date = DATE_ADD(prev_login_date, 1);
+
+
+-- option 2:
+SELECT DISTINCT l1.user_id
+FROM Logins l1
+JOIN Logins l2
+  ON l1.user_id = l2.user_id
+ AND l1.login_date = DATE_ADD(l2.login_date, 1);
+
+
+--Write an SQL query to find employees who earn more than the average salary of their own department.
+SELECT emp_name
+FROM (
+    SELECT emp_name,
+           salary,
+           AVG(salary) OVER (PARTITION BY department) AS dept_avg
+    FROM Employees
+) t
+WHERE salary > dept_avg;
+
+
+--Write an SQL query to find customers who have never placed any order.
+
+-- option 1:
+SELECT c.customer_name
+FROM customers c
+LEFT JOIN orders o
+  ON c.customer_id = o.customer_id
+WHERE o.customer_id IS NULL;
+
+
+-- option 2:
+SELECT customer_name
+FROM customers
+WHERE customer_id NOT IN (
+    SELECT customer_id
+    FROM orders
+    WHERE customer_id IS NOT NULL
+);

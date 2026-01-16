@@ -1130,12 +1130,33 @@
 
 
 
-def prime(n):
-	a = 0
-	n = list(str(n))
-	for i in n:
-		a +=int(i)
-	return a
-print(prime(1234)) 
+# def prime(n):
+# 	a = 0
+# 	n = list(str(n))
+# 	for i in n:
+# 		a +=int(i)
+# 	return a
+# print(prime(1234)) 
+
+##Max profit from stock prices
+# prices = [7, 1, 5, 3, 6, 4]
+
+# max_profit = 0
+
+# for i in range(len(prices)):
+#     for j in range(i+1, len(prices)):
+#         profit = prices[j] - prices[i]
+#         if profit > max_profit:
+#             max_profit = profit
+
+# print(max_profit)   # 5
 
 
+lst = [3, 7, 2, 9, 4]
+a= lst[0]
+
+for i in range(0,len(lst)):
+    if a < lst[i]:
+        a=lst[i]
+
+print(a)

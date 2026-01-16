@@ -34,7 +34,24 @@
 #         a.append(i)
 # print(a)
         
-a = "Tirtho"
-print(a[::-1])
+# a = "Tirtho"
+# print(a[::-1])
+
+
+prices = [7, 1, 5, 3, 6, 4]
+
+min_price = float('inf')
+max_profit = 0
+
+for price in prices:
+    if price < min_price:
+        min_price = price
+    else:
+        profit = price - min_price
+        if profit > max_profit:
+            max_profit = profit
+
+print(max_profit)   # Output: 5
+
         
 

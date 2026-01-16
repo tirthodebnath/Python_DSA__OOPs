@@ -596,7 +596,6 @@ ON
 
 
 /*Sql case with grades*/
-
 SELECT
     FirstName,
     Salary,
@@ -609,7 +608,6 @@ SELECT
     END AS grade
 FROM
     employee;
-
 
 
 /*Emp_ID - Emp_Name - WrkStn_ID - Manager_ID - Dept_ID - Salary
@@ -924,3 +922,117 @@ WHERE customer_id NOT IN (
     FROM orders
     WHERE customer_id IS NOT NULL
 );
+
+-----Write a SQL query to find users who logged in within 10 minutes of their previous login.
+SELECT DISTINCT user_id
+FROM (
+    SELECT
+        user_id,
+        login_time,
+        LAG(login_time) OVER (
+            PARTITION BY user_id
+            ORDER BY login_time
+        ) AS prev_login
+    FROM logins
+) t
+WHERE TIMESTAMPDIFF(MINUTE, prev_login, login_time) <= 10;
+
+
+--Input +---------+--------------+------------+--------+
+| OrderID | CustomerName | OrderDate  | Amount |
++---------+--------------+------------+--------+
+|   101   | Alice        | 2025-01-01 |   200  | 
+|   102   | Bob          | 2025-01-02 |   150  | 
+|   103   | Alice        | 2025-01-05 |   300  | 
+|   104   | Charlie      | 2025-01-07 |   100  | 
+|   105   | Bob          | 2025-01-10 |   250  | 
+|   106   | Alice        | 2025-01-12 |   400  | 
+|   107   | Charlie      | 2025-01-15 |   200  | 
++---------+--------------+------------+--------+
+
+--Output
+
+| OrderID | CustomerName | OrderDate  | Amount | Sum Amount |
++---------+--------------+------------+--------++--------+ 
+|   101   | Alice        | 2025-01-01 |   200  |    200
+|   102   | Bob          | 2025-01-02 |   150  |    150
+|   103   | Alice        | 2025-01-05 |   300  |    500
+|   104   | Charlie      | 2025-01-07 |   100  |    100
+|   105   | Bob          | 2025-01-10 |   250  |    400
+|   106   | Alice        | 2025-01-12 |   400  |    900
+|   107   | Charlie      | 2025-01-15 |   200  |    300
+
+--Ans--
+SELECT
+    OrderID,
+    CustomerName,
+    OrderDate,
+    Amount,
+    SUM(Amount) OVER (
+        PARTITION BY CustomerName
+        ORDER BY OrderDate
+        ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
+    ) AS "Sum Amount"
+FROM orders
+ORDER BY OrderDate;
+
+--Write an SQL query to find employees who were present for at least 2 consecutive days.
+SELECT DISTINCT emp_id
+FROM (
+    SELECT emp_id,
+           work_date,
+           status,
+           LAG(work_date) OVER (PARTITION BY emp_id ORDER BY work_date) AS prev_date,
+           LAG(status) OVER (PARTITION BY emp_id ORDER BY work_date) AS prev_status
+    FROM employee_attendance
+) t
+WHERE status = 'Present'
+  AND prev_status = 'Present'
+  AND work_date = prev_date + INTERVAL '1 day';
+
+
+-- For each user, find the number of login sessions.
+-- A session is defined as:
+-- A new session starts if the time difference between two consecutive logins is more than 30 minutes.
+
+SELECT user_id,
+       COUNT(*) AS session_count
+FROM (
+    SELECT user_id,
+           login_time,
+           CASE
+               WHEN LAG(login_time) OVER (PARTITION BY user_id ORDER BY login_time) IS NULL
+                    THEN 1
+               WHEN login_time >
+                    LAG(login_time) OVER (PARTITION BY user_id ORDER BY login_time)
+                    + INTERVAL '30 minute'
+                    THEN 1
+               ELSE 0
+           END AS new_session_flag
+    FROM login_logs
+) t
+WHERE new_session_flag = 1
+GROUP BY user_id;
+
+
+-- Find the second highest salary in each department.
+-- If a department has fewer than 2 employees, do not include it in the result.
+
+SELECT dept_id,
+       salary AS second_highest_salary
+FROM (
+    SELECT dept_id,
+           salary,
+           DENSE_RANK() OVER (
+               PARTITION BY dept_id
+               ORDER BY salary DESC
+           ) AS rnk,
+           COUNT(*) OVER (
+               PARTITION BY dept_id
+           ) AS emp_count
+    FROM employees
+) t
+WHERE rnk = 2
+  AND emp_count >= 2;
+
+

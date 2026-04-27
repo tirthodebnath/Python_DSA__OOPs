@@ -712,18 +712,18 @@ where row_num > 1
 --Find departments where average salary is greater than 70000
 WITH avg_sal_dep AS (
     SELECT 
-        d.department_name,
+        d.deptname,
         AVG(e.salary) AS avg_salary
-    FROM employees e
-    JOIN departments d 
-        ON e.department_id = d.department_id
-    GROUP BY d.department_name
+    FROM employee e
+    JOIN department d 
+        ON e.deptid = d.deptid
+    GROUP BY d.deptname
 )
 SELECT 
-    department_name, 
+    deptname, 
     avg_salary
 FROM avg_sal_dep
-WHERE avg_salary > 70000;
+WHERE avg_salary > 1000;
 
 
 
@@ -872,17 +872,18 @@ WHERE hire_date >= DATEADD(MONTH, -6, CURRENT_DATE);
 -- Find the users who logged in on two consecutive days.
 
 -- option 1:
-SELECT DISTINCT user_id
+SELECT DISTINCT *
 FROM (
-    SELECT user_id,
-           login_date,
-           LAG(login_date) OVER (
-               PARTITION BY user_id
-               ORDER BY login_date
-           ) AS prev_login_date
-    FROM Logins
+    SELECT 
+        user_id, 
+        event_timestamp,
+        LAG(event_timestamp) OVER (
+            PARTITION BY user_id 
+            ORDER BY event_timestamp
+        ) AS prev_login_date
+    FROM user_activity
 ) t
-WHERE login_date = DATE_ADD(prev_login_date, 1);
+WHERE DATEDIFF(day, prev_login_date, event_timestamp) = 1
 
 
 -- option 2:
@@ -962,19 +963,8 @@ WHERE TIMESTAMPDIFF(MINUTE, prev_login, login_time) <= 10;
 |   106   | Alice        | 2025-01-12 |   400  |    900
 |   107   | Charlie      | 2025-01-15 |   200  |    300
 
---Ans--
-SELECT
-    OrderID,
-    CustomerName,
-    OrderDate,
-    Amount,
-    SUM(Amount) OVER (
-        PARTITION BY CustomerName
-        ORDER BY OrderDate
-        ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
-    ) AS "Sum Amount"
-FROM orders
-ORDER BY OrderDate;
+
+
 
 --Write an SQL query to find employees who were present for at least 2 consecutive days.
 SELECT DISTINCT emp_id
@@ -1018,21 +1008,580 @@ GROUP BY user_id;
 -- Find the second highest salary in each department.
 -- If a department has fewer than 2 employees, do not include it in the result.
 
-SELECT dept_id,
-       salary AS second_highest_salary
+SELECT dept_id, salary AS second_highest_salary
 FROM (
-    SELECT dept_id,
-           salary,
-           DENSE_RANK() OVER (
-               PARTITION BY dept_id
-               ORDER BY salary DESC
-           ) AS rnk,
-           COUNT(*) OVER (
-               PARTITION BY dept_id
-           ) AS emp_count
-    FROM employees
+    SELECT dept_id,salary,DENSE_RANK() OVER (PARTITION BY dept_id ORDER BY salary DESC) AS rnk,
+    COUNT(*) OVER (PARTITION BY dept_id) AS emp_count FROM employees) t
+WHERE rnk = 2 AND emp_count >= 2;
+
+
+--Write a SQL query to find the salary difference between each employee's current and previous salary event.
+
+SELECT
+    emp_id,
+    event_date,
+    salary,
+    LAG(salary) OVER (PARTITION BY emp_idORDER BY event_date) AS prev_salary, 
+    salary - LAG(salary) OVER (PARTITION BY emp_id ORDER BY event_date) AS diff,
+    CASE
+        WHEN salary > LAG(salary) OVER (PARTITION BY emp_id ORDER BY event_date) THEN 'Y' ELSE 'N'
+    END AS increase_flag
+FROM employee_events;
+
+
+
+--Write a SQL query to find customers who have placed more than 3 orders in the last year. 
+--Return the customer_id, customer_name, and total number of orders.
+
+SELECT 
+    c.customer_id,
+    c.customer_name,
+    COUNT(o.order_id) AS total_orders
+FROM Customers c
+JOIN Orders o 
+    ON c.customer_id = o.customer_id
+WHERE o.order_date >= DATEADD(YEAR, -1, GETDATE())
+GROUP BY 
+    c.customer_id, 
+    c.customer_name
+HAVING COUNT(o.order_id) > 3;
+
+----Write a SQL query to find customers who have placed more than 3 orders in the last year.(Based on year)
+
+SELECT 
+    c.customer_id,
+    c.customer_name,
+    COUNT(o.order_id) AS total_orders
+FROM Customers c
+JOIN Orders o
+    ON c.customer_id = o.customer_id
+WHERE YEAR(o.order_date) = YEAR(GETDATE()) - 1
+GROUP BY 
+    c.customer_id,
+    c.customer_name
+HAVING COUNT(o.order_id) > 3;
+
+--Find departments with the highest average salary.
+
+WITH dept_avg AS (
+    SELECT department_name, AVG(salary) AS avg_salary
+    FROM table1
+    GROUP BY department_name
+)
+SELECT department_name, avg_salary
+FROM dept_avg
+WHERE avg_salary = (SELECT MAX(avg_salary) FROM dept_avg);
+
+
+--Write a SQL query to find the top 2 products,
+--with the highest revenue in each category.
+
+WITH ctc AS (
+    SELECT 
+        product_id,
+        product_category,
+        SUM(price_per_unit * quantity) AS revenue
+    FROM orders
+    GROUP BY product_id, product_category
+)
+SELECT *,
+       ROW_NUMBER() OVER (
+           PARTITION BY product_category 
+           ORDER BY revenue DESC
+       ) AS row_rank
+FROM ctc
+WHERE row_rank <= 2;
+
+--Write a SQL query to find the numbers which consecutively occur 3 times.
+SELECT numbers
+FROM (
+SELECT numbers,
+LEAD(numbers, 1) OVER (ORDER BY id) AS next_num,
+LEAD(numbers, 2) OVER (ORDER BY id) AS next_next_num
+FROM table_name
 ) t
-WHERE rnk = 2
-  AND emp_count >= 2;
+WHERE numbers = next_num AND numbers = next_next_num;
+
+--Write a SQL query to find the highest salary in each department
+--along with the employee name and supervisor name.
+
+WITH cte AS (
+    SELECT 
+        e.employee_id,
+        e.employee_name,
+        e.salary,
+        e.dept_id,
+        m.employee_name AS supervisor_name
+    FROM employee_new1 e
+    LEFT JOIN employee_new1 m
+        ON e.supervisor_id = m.employee_id
+)
+SELECT 
+    employee_id,
+    employee_name,
+    supervisor_name,
+    salary,
+    MAX(salary) OVER (PARTITION BY dept_id) AS dept_highest_salary,
+    FIRST_VALUE(employee_name) OVER (
+        PARTITION BY dept_id 
+        ORDER BY salary DESC
+    ) AS dept_highest_paid_employee
+FROM cte;
+
+--Write a SQL query to find all the employees who have been with the company 
+--for at least 3 consecutive years.
+
+WITH cte AS (
+    SELECT 
+        pid,
+        year,
+        LEAD(year, 1) OVER (PARTITION BY pid ORDER BY year) AS next_year,
+        LEAD(year, 2) OVER (PARTITION BY pid ORDER BY year) AS next_year_2
+    FROM event_table
+)
+SELECT DISTINCT pid
+FROM cte
+WHERE next_year = year + 1
+  AND next_year_2 = year + 2;
 
 
+--Write a SQL query to find the current day's sales amount for each product,
+--along with the next day's and previous day's sales amount for the same product.
+SELECT 
+    PRODUCT,
+    SALE_DATE,
+    AMOUNT AS CURRENT_DAY_SALE,
+    LEAD(AMOUNT) OVER (PARTITION BY PRODUCT ORDER BY SALE_DATE) AS NEXT_DAY_SALE,
+    LAG(AMOUNT) OVER (PARTITION BY PRODUCT  ORDER BY SALE_DATE) AS PREVIOUS_DAY_SALE
+FROM sales_data_1
+ORDER BY PRODUCT desc
+
+
+--Write a SQL query to calculate the total sales amount for each product for each month and year.
+WITH cte AS (
+    SELECT 
+        product,
+        YEAR(sale_date) AS sale_year,
+        MONTH(sale_date) AS sale_month,
+        amount
+    FROM sales_data_1
+)
+SELECT 
+    product,
+    sale_year,
+    sale_month,
+    SUM(amount) AS total_amount
+FROM cte
+GROUP BY product, sale_year, sale_month
+ORDER BY product, sale_year, sale_month;
+
+-- Option 2 Write a SQL query to calculate the total sales amount for each product for each month and year.
+SELECT 
+    product,
+    YEAR(sale_date) AS sale_year,
+    MONTH(sale_date) AS sale_month,
+    SUM(amount) AS total_amount
+FROM sales_data_1
+GROUP BY 
+    product,
+    YEAR(sale_date),
+    MONTH(sale_date)
+ORDER BY product, sale_year, sale_month;
+
+--Write a SQL query to calculate the difference in days between 
+--each sale and the previous sale for the same product.
+WITH cte AS (
+    SELECT  
+        product, 
+        sale_date,
+        LAG(sale_date) OVER (
+            PARTITION BY product 
+            ORDER BY sale_date
+        ) AS previous_sale_date
+    FROM sales_data_1
+)
+SELECT 
+    product,
+    sale_date,
+    ISNULL(previous_sale_date, '1900-01-01') AS previous_sale_date,
+    ISNULL(DATEDIFF(DAY, previous_sale_date, sale_date), 0) AS days_diff
+FROM cte
+where DATEDIFF(DAY, previous_sale_date, sale_date) = 1;
+
+
+--Write a SQL query to find the top 2 products with the highest revenue in each category,
+WITH product_revenue AS (
+    SELECT 
+        product_category,
+        product_id,
+        SUM(quantity * price_per_unit) AS revenue
+    FROM orders
+    WHERE status = 'Delivered'
+    GROUP BY product_category, product_id
+)
+SELECT *
+FROM (
+    SELECT *, 
+        DENSE_RANK() OVER (
+            PARTITION BY product_category 
+            ORDER BY revenue DESC
+        ) AS rnk
+    FROM product_revenue
+) t1
+WHERE rnk <= 2;
+
+--Write a SQL query to calculate the total number of orders 
+--and the number of delivered orders for each city.
+SELECT 
+    city,
+    COUNT(*) AS total_orders,
+    SUM(CASE 
+            WHEN [status] = 'Delivered' THEN 1 
+            ELSE 0 
+        END) AS delivered_orders
+FROM orders
+GROUP BY city;
+
+--Write a SQL query to calculate the total number of orders,
+--the number of delivered orders, the number of returned orders,
+SELECT 
+    city,
+    SUM(CASE WHEN [status] = 'Delivered' THEN 1 ELSE 0 END) AS delivered_orders,
+    SUM(CASE WHEN [status] = 'Returned' THEN 1 ELSE 0 END) AS returned_orders,
+    SUM(CASE WHEN [status] = 'Cancelled' THEN 1 ELSE 0 END) AS cancelled_orders
+FROM orders
+GROUP BY city;
+
+--Write a SQL query to find the gap in days between each order and the previous order,
+-- for the same customer,
+WITH cte AS (
+    SELECT 
+        customer_id,
+        order_id,
+        order_date,
+        LAG(order_date) OVER (
+            PARTITION BY customer_id 
+            ORDER BY order_date
+        ) AS previous_order_date
+    FROM orders
+)
+SELECT 
+    customer_id,
+    order_id,
+    order_date,
+    previous_order_date,
+    DATEDIFF(DAY, previous_order_date, order_date) AS days_gap,
+    CASE 
+        WHEN previous_order_date IS NULL THEN 'New Order'
+        WHEN DATEDIFF(DAY, previous_order_date, order_date) <= 30 THEN 'Repeat Order'
+        ELSE 'New Order'
+    END AS order_type
+FROM cte
+ORDER BY customer_id, order_date;
+
+--Write a SQL query to compare the revenue of each order 
+--with the previous order for the same customer and indicate whether the revenue has
+-- increased, decreased, or remained the same.
+
+WITH cte AS (
+    SELECT 
+        customer_id, 
+        order_id, 
+        order_date, 
+        (quantity * price_per_unit) AS current_revenue,
+        LAG(quantity * price_per_unit) OVER (
+            PARTITION BY customer_id 
+            ORDER BY order_date
+        ) AS previous_revenue
+    FROM orders
+)
+SELECT *,
+    CASE
+        WHEN previous_revenue IS NULL THEN 'First Order'
+        WHEN current_revenue > previous_revenue THEN 'Increased'
+        WHEN current_revenue < previous_revenue THEN 'Decreased'
+        ELSE 'Same'
+    END AS revenue_trend
+FROM cte;
+
+--Write a SQL query to calculate the running total of revenue for each city,
+SELECT 
+    city,
+    order_date,
+    (quantity * price_per_unit) AS revenue,
+    SUM(quantity * price_per_unit) OVER (
+        PARTITION BY city, 
+                     YEAR(order_date), 
+                     MONTH(order_date)
+        ORDER BY order_date
+        ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
+    ) AS running_total
+FROM orders
+WHERE [status] = 'Delivered';
+
+--Write a SQL query to calculate the total revenue for each city and month,
+with cte as(select city, MONTH(order_date) as month, (quantity * price_per_unit) as revenue,
+sum(quantity * price_per_unit) over (partition by city, YEAR(order_date), MONTH(order_date) order by order_date
+rows between UNBOUNDED PRECEDING and current row) as running_total
+from orders
+where [status] = 'Delivered'
+)
+select city, month, sum(revenue) as total_revenue, max(running_total) as total_running_revenue
+from cte group by city, month
+order by city, month;
+
+
+--Running total of Delivered revenue per customer
+--BUT reset the running total whenever there is a gap of more than 20 days between consecutive orders.
+
+WITH cte AS (
+    SELECT 
+        customer_id,
+        order_date,
+        quantity * price_per_unit AS revenue,
+        LAG(order_date) OVER (
+            PARTITION BY customer_id 
+            ORDER BY order_date
+        ) AS prev_order_date
+    FROM orders
+    WHERE [status] = 'Delivered'
+),
+
+flag_cte AS (
+    SELECT *,
+        CASE 
+            WHEN prev_order_date IS NULL THEN 1
+            WHEN DATEDIFF(DAY, prev_order_date, order_date) > 20 THEN 1
+            ELSE 0
+        END AS new_group_flag
+    FROM cte
+),
+
+group_cte AS (
+    SELECT *,
+        SUM(new_group_flag) OVER (
+            PARTITION BY customer_id 
+            ORDER BY order_date
+            ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
+        ) AS grp
+    FROM flag_cte
+)
+
+
+--Find all orders where the order amount (quantity * price_per_unit)
+-- is greater than the average order amount of the same product_category.
+SELECT 
+    order_id,
+    product_category,
+    quantity * price_per_unit AS order_amount
+FROM orders o
+WHERE (quantity * price_per_unit) >
+(
+    SELECT AVG(quantity * price_per_unit)
+    FROM orders
+    GROUP BY product_category
+    having product_category = o.product_category
+);
+
+--Write a SQL query to find employees 
+--whose salary is greater than the average salary of their own department.
+SELECT *
+FROM (
+    SELECT e.EmpName,
+           e.Salary,
+           d.DeptName,
+           AVG(e.Salary) OVER (PARTITION BY e.DeptID) AS DepartmentAvgSalary
+    FROM Employee e
+    JOIN Department d 
+        ON e.DeptID = d.DeptID
+) t
+WHERE Salary > DepartmentAvgSalary;
+
+--Write a SQL query to find the manager who has the 
+--most employees reporting to them, along with the count of employees.
+SELECT TOP 1 
+       m.EmpName AS ManagerName,
+       COUNT(e.EmpID) AS NumberOfEmployees
+FROM Employee e
+JOIN Employee m 
+     ON e.ManagerID = m.EmpID
+WHERE e.ManagerID IS NOT NULL
+GROUP BY m.EmpName
+ORDER BY COUNT(e.EmpID) DESC;  
+
+--Daily Active User
+SELECT 
+    CAST(event_timestamp AS Week) AS activity_date,
+    COUNT(DISTINCT user_id) AS DAU
+FROM user_activity
+GROUP BY CAST(event_timestamp AS Week)
+ORDER BY activity_date;
+
+--Weekly Active User
+SELECT 
+    DATEPART(YEAR, event_timestamp) AS yr,
+    DATEPART(WEEK, event_timestamp) AS wk,
+    COUNT(DISTINCT user_id) AS WAU
+FROM user_activity
+GROUP BY 
+    DATEPART(YEAR, event_timestamp),
+    DATEPART(WEEK, event_timestamp)
+ORDER BY yr, wk;
+
+--Monthly Active User
+SELECT 
+    DATEPART(YEAR, event_timestamp) AS yr,
+    DATEPART(MONTH, event_timestamp) AS mn,
+    COUNT(DISTINCT user_id) AS MAU
+FROM user_activity
+GROUP BY 
+    DATEPART(YEAR, event_timestamp),
+    DATEPART(MONTH, event_timestamp)
+ORDER BY yr, mn;
+
+--Yearly Active User
+SELECT 
+    DATEPART(YEAR, event_timestamp) AS yr,
+    COUNT(DISTINCT user_id) AS YAU
+FROM user_activity
+GROUP BY DATEPART(YEAR, event_timestamp)
+ORDER BY yr;
+
+--Delete duplicate rows in SQL using CTE and row_number
+with cte as(select * from (select city, state, stars, row_number() over(partition by state order by stars desc) as rn
+from [test_database].[dbo].[hotel]) t)
+delete from cte where rn > 1;
+
+
+--For each user, calculate the running total of revenue over time 
+--(only for purchase events),
+SELECT 
+    l.user_id,
+    l.event_timestamp AS login_time,
+    p.event_timestamp AS purchase_time,
+    DATEDIFF(MINUTE, l.event_timestamp, p.event_timestamp) AS time_diff_minutes
+FROM user_activity l
+JOIN user_activity p 
+    ON l.user_id = p.user_id
+    AND CAST(l.event_timestamp AS DATE) = CAST(p.event_timestamp AS DATE)
+WHERE l.event_type = 'login'
+    AND p.event_type = 'purchase'
+    AND DATEDIFF(MINUTE, l.event_timestamp, p.event_timestamp) BETWEEN 0 AND 120;
+
+
+--Write a SQL query to find the employees who joined in a year when more than one department 
+--had new joiners, along with the count of departments that had new joiners in that year.
+SELECT e.EmpName, d.DeptName, 
+       YEAR(e.JoiningDate) AS JoiningYear,
+       yd.DeptCount
+FROM Employee e
+JOIN Department d ON e.DeptID = d.DeptID
+JOIN (
+    -- Step 1: Per year, count how many distinct depts have joiners
+    SELECT YEAR(JoiningDate) AS JoiningYear,
+           COUNT(DISTINCT DeptID) AS DeptCount
+    FROM Employee
+    GROUP BY YEAR(JoiningDate)
+    HAVING COUNT(DISTINCT DeptID) > 1        -- Only multi-dept years
+) yd ON YEAR(e.JoiningDate) = yd.JoiningYear
+ORDER BY JoiningYear
+
+
+--Write a SQL query to calculate the time difference in hours between a user's 
+--first login and their first purchase.
+WITH first_login AS (
+    SELECT 
+        user_id,
+        MIN(event_timestamp) AS first_login_time
+    FROM user_activity
+    WHERE event_type = 'login'
+    GROUP BY user_id
+),
+first_purchase AS (
+    SELECT 
+        user_id,
+        MIN(event_timestamp) AS first_purchase_time
+    FROM user_activity
+    WHERE event_type = 'purchase'
+    GROUP BY user_id
+)
+SELECT 
+    fl.user_id,
+    fl.first_login_time,
+    fp.first_purchase_time,
+    CAST(DATEDIFF(SECOND, fl.first_login_time, fp.first_purchase_time) / 3600.0 AS DECIMAL(10,2)) AS hours_to_convert
+FROM first_login fl
+INNER JOIN first_purchase fp 
+    ON fl.user_id = fp.user_id
+WHERE fp.first_purchase_time > fl.first_login_time
+ORDER BY hours_to_convert ASC;
+
+--Consecutive Login Days
+WITH login_days AS (
+    SELECT DISTINCT
+        user_id,
+        CAST(event_timestamp AS DATE) AS login_date
+    FROM user_activity
+    WHERE event_type = 'login'
+),
+with_prev AS (
+    SELECT
+        user_id,
+        login_date,
+        LAG(login_date) OVER (PARTITION BY user_id ORDER BY login_date) AS prev_login_date
+    FROM login_days
+)
+SELECT
+    user_id,
+    COUNT(*) AS consecutive_login_pairs
+FROM with_prev
+WHERE DATEDIFF(DAY, prev_login_date, login_date) = 1
+GROUP BY user_id
+ORDER BY consecutive_login_pairs DESC, user_id ASC;
+
+
+--Write a SQL query to find the date when each customer
+--first reached a cumulative purchase amount of $1000 or more.
+WITH RunningCTE AS (
+    SELECT
+        CustomerID,
+        TxnDate,
+        SUM(Amount) OVER (PARTITION BY CustomerID 
+                          ORDER BY TxnDate
+                          ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS RunningTotal
+    FROM Transactions
+),
+RankedCTE AS (
+    SELECT *,
+        ROW_NUMBER() OVER (PARTITION BY CustomerID ORDER BY TxnDate) AS rnk
+    FROM RunningCTE
+    WHERE RunningTotal >= 1000
+)
+SELECT CustomerID, TxnDate, RunningTotal
+FROM RankedCTE
+WHERE rnk = 1;
+
+
+
+----SCD Type 2 Code
+
+-- PASS 1 : Expire old rows where salary has changed
+MERGE INTO target_table AS trg
+USING source_table AS src
+    ON  trg.id = src.id
+    AND trg.is_current = 1
+
+WHEN MATCHED AND trg.salary <> src.salary THEN
+    UPDATE SET
+        trg.end_date   = GETDATE(),
+        trg.is_current = 0;
+
+-- PASS 2 : Insert new current row for changed + net-new records
+MERGE INTO target_table AS trg
+USING source_table AS src
+    ON  trg.id         = src.id
+    AND trg.is_current = 1        -- only active rows qualify as a match
+
+WHEN NOT MATCHED BY TARGET THEN   -- no active row found = new ID or just-expired
+    INSERT (id, salary, start_date, end_date, is_current)
+    VALUES (src.id, src.salary, GETDATE(), NULL, 1);

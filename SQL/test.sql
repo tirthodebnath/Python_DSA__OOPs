@@ -712,18 +712,18 @@ where row_num > 1
 --Find departments where average salary is greater than 70000
 WITH avg_sal_dep AS (
     SELECT 
-        d.deptname,
+        d.department_name,
         AVG(e.salary) AS avg_salary
-    FROM employee e
-    JOIN department d 
-        ON e.deptid = d.deptid
-    GROUP BY d.deptname
+    FROM employees e
+    JOIN departments d 
+        ON e.department_id = d.department_id
+    GROUP BY d.department_name
 )
 SELECT 
-    deptname, 
+    department_name, 
     avg_salary
 FROM avg_sal_dep
-WHERE avg_salary > 1000;
+WHERE avg_salary > 70000;
 
 
 
@@ -872,18 +872,17 @@ WHERE hire_date >= DATEADD(MONTH, -6, CURRENT_DATE);
 -- Find the users who logged in on two consecutive days.
 
 -- option 1:
-SELECT DISTINCT *
+SELECT DISTINCT user_id
 FROM (
-    SELECT 
-        user_id, 
-        event_timestamp,
-        LAG(event_timestamp) OVER (
-            PARTITION BY user_id 
-            ORDER BY event_timestamp
-        ) AS prev_login_date
-    FROM user_activity
+    SELECT user_id,
+           login_date,
+           LAG(login_date) OVER (
+               PARTITION BY user_id
+               ORDER BY login_date
+           ) AS prev_login_date
+    FROM Logins
 ) t
-WHERE DATEDIFF(day, prev_login_date, event_timestamp) = 1
+WHERE login_date = DATE_ADD(prev_login_date, 1);
 
 
 -- option 2:
@@ -963,8 +962,19 @@ WHERE TIMESTAMPDIFF(MINUTE, prev_login, login_time) <= 10;
 |   106   | Alice        | 2025-01-12 |   400  |    900
 |   107   | Charlie      | 2025-01-15 |   200  |    300
 
-
-
+--Ans--
+SELECT
+    OrderID,
+    CustomerName,
+    OrderDate,
+    Amount,
+    SUM(Amount) OVER (
+        PARTITION BY CustomerName
+        ORDER BY OrderDate
+        ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
+    ) AS "Sum Amount"
+FROM orders
+ORDER BY OrderDate;
 
 --Write an SQL query to find employees who were present for at least 2 consecutive days.
 SELECT DISTINCT emp_id
@@ -1008,7 +1018,8 @@ GROUP BY user_id;
 -- Find the second highest salary in each department.
 -- If a department has fewer than 2 employees, do not include it in the result.
 
-SELECT dept_id, salary AS second_highest_salary
+SELECT dept_id,
+       salary AS second_highest_salary
 FROM (
     SELECT dept_id,salary,DENSE_RANK() OVER (PARTITION BY dept_id ORDER BY salary DESC) AS rnk,
     COUNT(*) OVER (PARTITION BY dept_id) AS emp_count FROM employees) t

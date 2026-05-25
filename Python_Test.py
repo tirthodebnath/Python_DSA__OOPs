@@ -1152,38 +1152,11 @@
 # print(max_profit)   # 5
 
 
-# lst = [3, 7, 2, 9, 4]
-# a = lst[0]
+lst = [3, 7, 2, 9, 4]
+a= lst[0]
 
-# for i in range(0,len(lst)):
-#     if a < lst[i]:
-#         a=lst[i]
+for i in range(0,len(lst)):
+    if a < lst[i]:
+        a=lst[i]
 
-# print(a)
-
-
-# class my_str:
-#     def m_str(self, a):
-#         b = {}
-#         for i in a:
-#             if i in b:
-#                 b[i] += 1
-#             else:
-#                 b[i] = 1
-#         return b
-
-# s = my_str()
-# print(s.m_str("tirtho"))
-
-logs = "1233345566789"
-def remove_duplicates(lst):
-    seen = set()
-    result = []
-    for item in lst:
-        if item not in seen:
-            result.append(item)
-            seen.add(item)
-    return result
-
-result = remove_duplicates(logs)
-print(result)
+print(a)

@@ -1,3 +1,3 @@
-a= [1,1,3,2,5,6,5]
-
-
+a= "abcdefghijklmnopqrstuvwxyz"
+for i in a:
+    print(i)
